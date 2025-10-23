@@ -1,9 +1,10 @@
 import requests
-
+import pprint
+from json import loads
 
 def test_post_v1_account():
 
-    login = 'kristinochka_test'
+    login = 'kristinochka_test3'
     password = '123456789'
     email = f'{login}@mail.com'
 
@@ -18,25 +19,45 @@ def test_post_v1_account():
     response = requests.post('http://5.63.153.31:5051/v1/account', json=json_data)
     print(response.status_code)
     print(response.text)
+    assert response.status_code == 201, f"Пользователь не был создан {response.json()}"
+
+
+
 
     # Получить письма из почтового сервера
 
     params = {
-        'limit': '50',
+        'limit': '10',
     }
 
     response = requests.get('http://5.63.153.31:5025/api/v2/messages', params=params, verify=False)
     print(response.status_code)
     print(response.text)
+    assert response.status_code == 200, f"Письма не были получены {response.json()}"
+  #  pprint.pprint(response.json())
+
+
 
     # Получить активационный токен
-    ...
+    token = None
+    for item in response.json()['items']:
+        user_data = loads(item['Content']['Body'])
+        user_login = user_data['Login']
+
+        if user_login == login:
+            print(user_login)
+            token = user_data['ConfirmationLinkUrl'].split('/')[-1]
+            print(token)
+    assert token is not None, f"Токен для пользоваетля {login} не был получен"
+
 
     # Активация пользователя
 
-    response = requests.put('http://5.63.153.31:5051/v1/account/d8abb155-1461-4650-8372-3dea87c612e5')
+    response = requests.put(f'http://5.63.153.31:5051/v1/account/{token}')
     print(response.status_code)
     print(response.text)
+    assert response.status_code == 200, f"Пользователь не был активирован {response.json()}"
+
     # Авторизоваться
 
     json_data = {
@@ -48,4 +69,5 @@ def test_post_v1_account():
     response = requests.post('http://5.63.153.31:5051/v1/account/login', json=json_data)
     print(response.status_code)
     print(response.text)
-    ...
+    assert response.status_code == 200, f"Пользователь не смог авторизоваться {response.json()}"
+
