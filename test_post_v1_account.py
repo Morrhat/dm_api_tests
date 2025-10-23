@@ -4,7 +4,7 @@ from json import loads
 
 def test_post_v1_account():
 
-    login = 'kristinochka_test3'
+    login = 'kristinochka_test4'
     password = '123456789'
     email = f'{login}@mail.com'
 
