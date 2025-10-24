@@ -16,6 +16,7 @@ class MailhogAPI:
     ):
 
         """
+        PUT /api/v2/messages
         Get Users emails
         :return:
         """
