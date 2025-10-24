@@ -6,14 +6,13 @@ from api_mailhog.apis.mailhog_api import MailhogAPI
 
 
 def test_post_v1_account():
-
     # Регистрация пользователя
 
     account_api = AccountAPI(host='http://5.63.153.31:5051')
     login_api = LoginAPI(host='http://5.63.153.31:5051')
     mailhog_api = MailhogAPI(host='http://5.63.153.31:5025')
 
-    login = 'kristinochka_test29'
+    login = 'kristinochka_test40'
     password = '123456789'
     email = f'{login}@mail.com'
     json_data = {

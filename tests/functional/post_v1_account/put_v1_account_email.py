@@ -5,7 +5,6 @@ from dm_api_account.apis.login_api import LoginAPI
 from api_mailhog.apis.mailhog_api import MailhogAPI
 
 
-
 def test_put_v1_account_email():
     # Регистрация пользователя
 
@@ -13,7 +12,7 @@ def test_put_v1_account_email():
     login_api = LoginAPI(host='http://5.63.153.31:5051')
     mailhog_api = MailhogAPI(host='http://5.63.153.31:5025')
 
-    login = 'kristinochka_test32'
+    login = 'kristinochka_test43'
     password = '123456789'
     email = f'{login}@mail.com'
     json_data = {
@@ -105,7 +104,6 @@ def test_put_v1_account_email():
     print(response.text)
     assert response.status_code == 200, f"Пользователь не был активирован {response.json()}"
 
-
     # Авторизоваться
 
     json_data = {
@@ -118,7 +116,6 @@ def test_put_v1_account_email():
     print(response.status_code)
     print(response.text)
     assert response.status_code == 200, f"Пользователь авторизовался {response.json()}"
-
 
 
 def get_activation_token_by_login(
