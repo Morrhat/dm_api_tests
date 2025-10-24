@@ -14,7 +14,6 @@ class AccountAPI:
             self,
             json_data
     ):
-
         """
         POST
         /v1/account
@@ -22,7 +21,6 @@ class AccountAPI:
         :param json_data:
         :return:
         """
-
 
         response = requests.post(
             url=f'{self.host}/v1/account',
@@ -34,7 +32,6 @@ class AccountAPI:
             self,
             token
     ):
-
         """
         PUT
         /v1/account/{token}
@@ -42,7 +39,6 @@ class AccountAPI:
         :param token:
         :return:
         """
-
 
         headers = {
             'accept': 'text/plain',

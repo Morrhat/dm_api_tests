@@ -14,13 +14,11 @@ class MailhogAPI:
             self,
             limit=50
     ):
-
         """
         PUT /api/v2/messages
         Get Users emails
         :return:
         """
-
 
         params = {
             'limit': limit,

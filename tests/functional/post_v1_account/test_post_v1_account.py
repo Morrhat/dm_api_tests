@@ -12,7 +12,7 @@ def test_post_v1_account():
     login_api = LoginAPI(host='http://5.63.153.31:5051')
     mailhog_api = MailhogAPI(host='http://5.63.153.31:5025')
 
-    login = 'kristinochka_test8'
+    login = 'kristinochka_test10'
     password = '123456789'
     email = f'{login}@mail.com'
     json_data = {
@@ -35,14 +35,13 @@ def test_post_v1_account():
     #  pprint.pprint(response.json())
 
     # Получить активационный токен
-    token = get_activation_token_by_login(login, response)
 
+    token = get_activation_token_by_login(login, response)
     assert token is not None, f"Токен для пользоваетля {login} не был получен"
 
     # Активация пользователя
 
     response = account_api.put_v1_account_token(token=token)
-
     print(response.status_code)
     print(response.text)
     assert response.status_code == 200, f"Пользователь не был активирован {response.json()}"
@@ -64,7 +63,7 @@ def test_post_v1_account():
 def get_activation_token_by_login(
         login,
         response
-        ):
+):
     token = None
     for item in response.json()['items']:
         user_data = loads(item['Content']['Body'])

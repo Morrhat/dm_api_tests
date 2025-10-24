@@ -14,7 +14,6 @@ class LoginAPI:
             self,
             json_data
     ):
-
         """
         POST
         /v1/account/login
@@ -22,7 +21,6 @@ class LoginAPI:
         :param json_data:
         :return:
         """
-
 
         response = requests.post(
             url=f'{self.host}/v1/account/login',
