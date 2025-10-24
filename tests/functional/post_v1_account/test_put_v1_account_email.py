@@ -12,7 +12,7 @@ def test_put_v1_account_email():
     login_api = LoginAPI(host='http://5.63.153.31:5051')
     mailhog_api = MailhogAPI(host='http://5.63.153.31:5025')
 
-    login = 'kristinochka_test47'
+    login = 'kristinochka_test65'
     password = '123456789'
     email = f'{login}@mail.com'
     json_data = {
@@ -64,7 +64,7 @@ def test_put_v1_account_email():
     json_data = {
         'login': login,
         'password': password,
-        'email': email,
+        'email': 'kristinochka_test70@gmail.com',
     }
     response = account_api.put_v1_account_email(json_data=json_data)
     print(response.status_code)
