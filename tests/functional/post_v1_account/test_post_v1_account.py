@@ -1,10 +1,10 @@
 from json import loads
 
-from dm_api_account.apis.account_api import AccountAPI
-from dm_api_account.apis.login_api import LoginAPI
-from api_mailhog.apis.mailhog_api import MailhogAPI
+from helpers.account_helper import AccountHelper
 from restclient.configuration import Configuration as MailhogConfiguration
 from restclient.configuration import Configuration as DmApiConfiguration
+from services.dm_api_account import DMApiAccount
+from services.api_mailhog import MailHogApi
 import structlog
 
 structlog.configure(
@@ -24,18 +24,14 @@ def test_post_v1_account():
     mailhog_configuration = MailhogConfiguration(host='http://5.63.153.31:5025')
     dm_api_configuration = DmApiConfiguration(host='http://5.63.153.31:5051', disable_log=False)
 
-    account_api = AccountAPI(configuration=dm_api_configuration)
-    login_api = LoginAPI(configuration=dm_api_configuration)
-    mailhog_api = MailhogAPI(configuration=mailhog_configuration)
+    account = DMApiAccount(configuration=dm_api_configuration)
+    mailhog = MailHogApi(configuration=mailhog_configuration)
 
-    login = 'kristinochka_test127'
+    account_helper = AccountHelper(dm_account_api=account, mailhog=mailhog)
+
+    login = 'kristinochka_test143'
     password = '123456789'
     email = f'{login}@mail.com'
-    json_data = {
-        'login': login,
-        'email': email,
-        'password': password,
-    }
+    account_helper.register_new_user(login=login, password=password, email=email)
 
-    response = account_api.post_v1_account(json_data=json_data)
-    assert response.status_code == 201, f"Пользователь не был создан {response.json()}"
+
