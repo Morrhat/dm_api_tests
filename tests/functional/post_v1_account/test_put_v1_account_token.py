@@ -29,17 +29,7 @@ def test_put_v1_account_token():
 
     account_helper = AccountHelper(dm_account_api=account, mailhog=mailhog)
 
-    login = 'kristinochka_test146'
+    login = 'kristinochka_test187'
     password = '123456789'
     email = f'{login}@mail.com'
     account_helper.register_new_user(login=login, password=password, email=email)
-
-    # Получить письма из почтового сервера
-
-    response = mailhog.mailhog_api.get_api_v2_messages()
-    assert response.status_code == 200, f"Письма не были получены {response.json()}"
-    #  pprint.pprint(response.json())
-
-    # Получить активационный токен из письма и активировать
-
-    account_helper.get_token_by_email(login=login)

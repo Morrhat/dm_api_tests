@@ -29,7 +29,7 @@ def test_put_v1_account_email():
 
     account_helper = AccountHelper(dm_account_api=account, mailhog=mailhog)
 
-    login = 'kristinochka_test145'
+    login = 'kristinochka_test186'
     password = '123456789'
     email = f'{login}@mail.com'
     account_helper.register_new_user(login=login, password=password, email=email)
@@ -44,13 +44,14 @@ def test_put_v1_account_email():
 
     # Авторизация под старыми данными неудачная
 
-    account_helper.user_old_login(login=login, password=password)
+    response = account_helper.user_login(login=login, password=password)
+    assert response.status_code == 403, f"Пользователь смог авторизоваться под старыми данными {response.json()}"
 
-    # Получить токен из почтового сервера по новому email для подтверждения смены и активации
+    # Получить токен из почтового сервера по новому email для подтверждения смены
 
-    account_helper.get_token_by_email(login=login)
+    account_helper.get_activation_token(login=login)
 
     # Авторизоваться
 
-    account_helper.user_login(login=login, password=password)
-
+    response = account_helper.user_login(login=login, password=password)
+    assert response.status_code == 200, f"Пользователь не смог авторизоваться {response.json()}"
