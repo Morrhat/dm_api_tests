@@ -1,7 +1,25 @@
+import time
 from json import loads
 
 from services.dm_api_account import DMApiAccount
 from services.api_mailhog import MailHogApi
+
+
+def retrier(function):
+    def wrapper(*args, **kwargs):
+        token = None
+        count = 0
+        while token is None:
+            print(f"Попытка получения токена номер {count}")
+            token = function(*args, **kwargs)
+            count += 1
+            if count == 0:
+                raise AssertionError("Превышено количество попыток получения активационного токена")
+            if token:
+                return token
+            time.sleep(1)
+    return wrapper
+
 
 
 class AccountHelper:
@@ -62,6 +80,7 @@ class AccountHelper:
 
 
      #Получение токена из письма и активация
+    @retrier
     def get_activation_token(
             self,
             login: str
