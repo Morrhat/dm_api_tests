@@ -13,7 +13,7 @@ def retrier(function):
             print(f"Попытка получения токена номер {count}")
             token = function(*args, **kwargs)
             count += 1
-            if count == 0:
+            if count == 5:
                 raise AssertionError("Превышено количество попыток получения активационного токена")
             if token:
                 return token
