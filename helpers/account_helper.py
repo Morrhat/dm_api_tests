@@ -5,8 +5,13 @@ from services.dm_api_account import DMApiAccount
 from services.api_mailhog import MailHogApi
 
 
-def retrier(function):
-    def wrapper(*args, **kwargs):
+def retrier(
+        function
+        ):
+    def wrapper(
+            *args,
+            **kwargs
+            ):
         token = None
         count = 0
         while token is None:
@@ -18,8 +23,8 @@ def retrier(function):
             if token:
                 return token
             time.sleep(1)
-    return wrapper
 
+    return wrapper
 
 
 class AccountHelper:
@@ -31,9 +36,24 @@ class AccountHelper:
         self.dm_account_api = dm_account_api
         self.mailhog = mailhog
 
+    def auth_client(self, login: str, password: str):
+        response = self.dm_account_api.login_api.post_v1_account_login(
+            json_data={
+                'login': login,
+                'password': password})
+        token: dict[str, str] = {'x-dm-auth-token': response.headers['x-dm-auth-token']}
+        self.dm_account_api.account_api.set_headers(token)
+        self.dm_account_api.login_api.set_headers(token)
+
+
     # Регистрация и активация нового пользователя
 
-    def register_new_user(self, login: str, password: str, email: str):
+    def register_new_user(
+            self,
+            login: str,
+            password: str,
+            email: str
+            ):
         json_data = {
             'login': login,
             'email': email,
@@ -49,10 +69,14 @@ class AccountHelper:
         assert response.status_code == 200, f"Пользователь не был активирован {response.json()}"
         return response
 
-
     # Авторизация
 
-    def user_login(self, login: str, password: str, remember_me: bool = True):
+    def user_login(
+            self,
+            login: str,
+            password: str,
+            remember_me: bool = True
+            ):
         json_data = {
             'login': login,
             'password': password,
@@ -60,13 +84,17 @@ class AccountHelper:
         }
 
         response = self.dm_account_api.login_api.post_v1_account_login(json_data=json_data)
-        #assert response.status_code == 200, f"Пользователь не смог авторизоваться {response.json()}"
+        # assert response.status_code == 200, f"Пользователь не смог авторизоваться {response.json()}"
         return response
-
 
     # Смена email
 
-    def change_email(self, login: str, password: str, email: str):
+    def change_email(
+            self,
+            login: str,
+            password: str,
+            email: str
+            ):
         json_data = {
             'login': login,
             'password': password,
@@ -76,10 +104,7 @@ class AccountHelper:
         assert response.status_code == 200, f"Email пользователь не поменялся {response.json()}"
         return response
 
-
-
-
-     #Получение токена из письма и активация
+    # Получение токена из письма и активация
     @retrier
     def get_activation_token(
             self,
@@ -96,10 +121,7 @@ class AccountHelper:
             if user_login == login:
                 token = user_data['ConfirmationLinkUrl'].split('/')[-1]
         assert token is not None, f"Токен для пользоваетля {login} не был получен"
-                # Активация токена
+        # Активация токена
         response = self.dm_account_api.account_api.put_v1_account_token(token=token)
         assert response.status_code == 200, f"Пользователь не был активирован {response.json()}"
         return response
-
-
-
