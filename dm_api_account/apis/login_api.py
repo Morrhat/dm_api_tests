@@ -22,3 +22,33 @@ class LoginAPI(RestClient):
             json=json_data
         )
         return response
+
+    def delete_v1_account_login(
+            self
+    ):
+        """
+        DELETE
+        /v1/account/login
+        Logout as current user
+        :return:
+        """
+
+        response = self.delete(
+            path=f'/v1/account/login'
+        )
+        return response
+
+    def delete_v1_account_login_all(
+            self
+    ):
+        """
+        DELETE
+        /v1/account/login/all
+        Logout from every device
+        :return:
+        """
+
+        response = self.delete(
+            path=f'/v1/account/login/all'
+        )
+        return response
