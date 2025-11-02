@@ -36,6 +36,7 @@ class AccountHelper:
         self.dm_account_api = dm_account_api
         self.mailhog = mailhog
 
+    # Авторизационный токен
     def auth_client(self, login: str, password: str):
         response = self.dm_account_api.login_api.post_v1_account_login(
             json_data={
@@ -101,7 +102,7 @@ class AccountHelper:
             'email': email,
         }
         response = self.dm_account_api.account_api.put_v1_account_email(json_data=json_data)
-        assert response.status_code == 200, f"Email пользователь не поменялся {response.json()}"
+        assert response.status_code == 200, f"Email пользователя не поменялся {response.json()}"
         return response
 
     # Получение токена из письма и активация
@@ -125,3 +126,58 @@ class AccountHelper:
         response = self.dm_account_api.account_api.put_v1_account_token(token=token)
         assert response.status_code == 200, f"Пользователь не был активирован {response.json()}"
         return response
+
+
+    # Инициализация сброса пароля
+    def change_password(
+            self,
+            login: str,
+            email: str,
+            password: str
+            ):
+        json_data = {
+            'login': login,
+            'email': email,
+        }
+        response = self.dm_account_api.account_api.post_v1_account_password(json_data=json_data)
+        assert response.status_code == 200, f"Сброс пароля не инициализирован {response.json()}"
+
+
+    # Смена пароля с пробросом авторизационного токена в хэдэры
+    #     и указанием токена для сброса пароля из письма
+    def get_password_token(
+            self,
+            login: str,
+            password: str,
+            token: str = None
+            ):
+        # Получение писем
+        response = self.mailhog.mailhog_api.get_api_v2_messages()
+        assert response.status_code == 200, f"Письма не были получены {response.json()}"
+
+        # Получение токена
+        token = None
+        for item in response.json()['items']:
+            user_data = loads(item['Content']['Body'])
+            if 'ConfirmationLinkUri' not in user_data:
+                continue
+            user_login = user_data['Login']
+            print(user_login)
+            print(user_data)
+            if user_login == login:
+                token = user_data['ConfirmationLinkUri'].split('/')[-1]
+                break
+        assert token is not None, f"Токен сброса пароля {login} не был получен"
+
+        # Активация токена сброса
+        json_data = {
+            "login": login,
+            "token": token,
+            "oldPassword": password,
+            "newPassword": "987654321"
+        }
+        response = self.dm_account_api.account_api.put_v1_account_password(json_data=json_data)
+        assert response.status_code == 200, f"Пароль не был изменён {response.json()}"
+        return response
+
+

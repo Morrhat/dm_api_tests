@@ -82,3 +82,47 @@ class AccountAPI(RestClient):
             headers=headers
         )
         return response
+
+
+    def post_v1_account_password(
+            self,
+            json_data
+    ):
+        """
+        POST
+        /v1/account/password
+        Reset registered user password
+        :return:
+        """
+
+        headers = {
+            'accept': 'text/plain'
+        }
+        response = self.post(
+            path=f'/v1/account/password',
+            json=json_data,
+            headers=headers
+        )
+        return response
+
+
+    def put_v1_account_password(
+            self,
+            json_data
+    ):
+        """
+        PUT
+        /v1/account/password
+        Change registered user password
+        :return:
+        """
+
+        headers = {
+            'accept': 'text/plain'
+        }
+        response = self.put(
+            path=f'/v1/account/password',
+            json=json_data,
+            headers=headers
+        )
+        return response
