@@ -7,11 +7,11 @@ from services.api_mailhog import MailHogApi
 
 def retrier(
         function
-        ):
+):
     def wrapper(
             *args,
             **kwargs
-            ):
+    ):
         token = None
         count = 0
         while token is None:
@@ -37,17 +37,23 @@ class AccountHelper:
         self.mailhog = mailhog
 
     # Авторизованный клиент
-    def auth_client(self, login: str, password: str):
+    def auth_client(
+            self,
+            login: str,
+            password: str
+    ):
         response = self.user_login(login=login, password=password)
-        token: dict[str, str] = {'x-dm-auth-token': response.headers['x-dm-auth-token']}
+        token: dict[str, str] = {
+            'x-dm-auth-token': response.headers['x-dm-auth-token']
+        }
         self.dm_account_api.account_api.set_headers(token)
         self.dm_account_api.login_api.set_headers(token)
 
-
     # Получить инфо о пользователе
-    def get_account_info(self):
+    def get_account_info(
+            self
+    ):
         self.dm_account_api.account_api.get_v1_account()
-
 
     # Регистрация и активация нового пользователя
     def register_new_user(
@@ -55,7 +61,7 @@ class AccountHelper:
             login: str,
             password: str,
             email: str
-           ):
+    ):
         json_data = {
             'login': login,
             'email': email,
@@ -76,7 +82,7 @@ class AccountHelper:
             login: str,
             password: str,
             remember_me: bool = True
-            ):
+    ):
         json_data = {
             'login': login,
             'password': password,
@@ -92,7 +98,7 @@ class AccountHelper:
             login: str,
             password: str,
             email: str
-            ):
+    ):
         json_data = {
             'login': login,
             'password': password,
@@ -103,7 +109,7 @@ class AccountHelper:
         return response
 
     # Получение токена из письма
-    @retrier
+
     def get_activation_token(
             self,
             login: str
@@ -122,14 +128,13 @@ class AccountHelper:
         assert token is not None, f"Токен для пользоваетля {login} не был получен"
         return token
 
-
     # Инициализация сброса пароля
     def change_password(
             self,
             login: str,
             email: str,
             password: str
-            ):
+    ):
         json_data = {
             'login': login,
             'email': email,
@@ -137,15 +142,13 @@ class AccountHelper:
         response = self.dm_account_api.account_api.post_v1_account_password(json_data=json_data)
         assert response.status_code == 200, f"Сброс пароля не инициализирован {response.json()}"
 
-
-    # Смена пароля с пробросом авторизационного токена в хэдэры
-    #     и указанием токена для сброса пароля из письма
+    #   Получение токена для сброса пароля из письма
+    @retrier
     def get_password_token(
             self,
             login: str,
-            password: str,
             token: str = None
-            ):
+    ):
         # Получение писем
         response = self.mailhog.mailhog_api.get_api_v2_messages()
         assert response.status_code == 200, f"Письма не были получены {response.json()}"
@@ -154,32 +157,39 @@ class AccountHelper:
         token = None
         for item in response.json()['items']:
             user_data = loads(item['Content']['Body'])
-            if 'ConfirmationLinkUri' not in user_data:
-                continue
             user_login = user_data['Login']
-            print(user_login)
-            print(user_data)
             if user_login == login:
                 token = user_data['ConfirmationLinkUri'].split('/')[-1]
-                break
         assert token is not None, f"Токен сброса пароля {login} не был получен"
+        return token
 
-        # Активация токена сброса пароля
+    # Смена пароля
+    # Активация токена сброса пароля
+    def set_new_password(
+            self,
+            login: str,
+            password: str,
+            token: str = None
+            ):
         json_data = {
             "login": login,
             "token": token,
             "oldPassword": password,
             "newPassword": "987654321"
         }
+        #token = self.get_password_token(login=login)
         response = self.dm_account_api.account_api.put_v1_account_password(json_data=json_data)
         assert response.status_code == 200, f"Пароль не был изменён {response.json()}"
         return response
 
     # Логаут пользователя
-    def logout_user(self):
+    def logout_user(
+            self
+    ):
         self.dm_account_api.login_api.delete_v1_account_login()
 
     # Логаут со всех устройств
-    def logout_user_all(self):
+    def logout_user_all(
+            self
+    ):
         self.dm_account_api.login_api.delete_v1_account_login_all()
-

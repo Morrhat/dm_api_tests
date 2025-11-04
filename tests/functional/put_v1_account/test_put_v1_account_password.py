@@ -14,8 +14,10 @@ def test_put_v1_account_password(account_helper, prepare_user):
     # Начало сброса пароля
     account_helper.change_password(login=login, email=email, password=password)
 
+    token = account_helper.get_password_token(login=login)
+
     # Смена пароля
-    account_helper.get_password_token(login=login, password=password)
+    account_helper.set_new_password(login=login, password=password, token=token)
 
     # Авторизоваться с новым паролем
     account_helper.user_login(login=login, password="987654321")

@@ -114,6 +114,7 @@ class AccountAPI(RestClient):
         PUT
         /v1/account/password
         Change registered user password
+        :param json_data:
         :return:
         """
 
