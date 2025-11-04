@@ -146,8 +146,7 @@ class AccountHelper:
     @retrier
     def get_password_token(
             self,
-            login: str,
-            token: str = None
+            login: str
     ):
         # Получение писем
         response = self.mailhog.mailhog_api.get_api_v2_messages()
@@ -157,9 +156,13 @@ class AccountHelper:
         token = None
         for item in response.json()['items']:
             user_data = loads(item['Content']['Body'])
+            # Ищем ConfirmationLinkUri из письма
+            if 'ConfirmationLinkUri' not in user_data:
+                continue
             user_login = user_data['Login']
             if user_login == login:
                 token = user_data['ConfirmationLinkUri'].split('/')[-1]
+                break # Когда находим прерываем цикл, чтобы не пересекалось с ConfirmationLinkUrl
         assert token is not None, f"Токен сброса пароля {login} не был получен"
         return token
 
