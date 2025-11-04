@@ -44,8 +44,12 @@ class AccountHelper:
         self.dm_account_api.login_api.set_headers(token)
 
 
-    # Регистрация и активация нового пользователя
+    # Получить инфо о пользователе
+    def get_account_info(self):
+        self.dm_account_api.account_api.get_v1_account()
 
+
+    # Регистрация и активация нового пользователя
     def register_new_user(
             self,
             login: str,
@@ -57,19 +61,16 @@ class AccountHelper:
             'email': email,
             'password': password,
         }
-
         # Регистрация пользователя
-
         response = self.dm_account_api.account_api.post_v1_account(json_data=json_data)
         assert response.status_code == 201, f"Пользователь не был создан {response.json()}"
-        # Активация
+        # Активация пользователя
         token = self.get_activation_token(login=login)
         response = self.dm_account_api.account_api.put_v1_account_token(token=token)
         assert response.status_code == 200, f"Пользователь не был активирован {response.json()}"
         return response
 
     # Авторизация
-
     def user_login(
             self,
             login: str,
@@ -81,13 +82,11 @@ class AccountHelper:
             'password': password,
             'rememberMe': remember_me,
         }
-
         response = self.dm_account_api.login_api.post_v1_account_login(json_data=json_data)
         # assert response.status_code == 200, f"Пользователь не смог авторизоваться {response.json()}"
         return response
 
     # Смена email
-
     def change_email(
             self,
             login: str,
@@ -109,6 +108,7 @@ class AccountHelper:
             self,
             login: str
     ):
+        # Получение писем
         response = self.mailhog.mailhog_api.get_api_v2_messages()
         assert response.status_code == 200, f"Письма не были получены {response.json()}"
 
@@ -164,7 +164,7 @@ class AccountHelper:
                 break
         assert token is not None, f"Токен сброса пароля {login} не был получен"
 
-        # Активация токена сброса
+        # Активация токена сброса пароля
         json_data = {
             "login": login,
             "token": token,
@@ -175,4 +175,11 @@ class AccountHelper:
         assert response.status_code == 200, f"Пароль не был изменён {response.json()}"
         return response
 
+    # Логаут пользователя
+    def logout_user(self):
+        self.dm_account_api.login_api.delete_v1_account_login()
+
+    # Логаут со всех устройств
+    def logout_user_all(self):
+        self.dm_account_api.login_api.delete_v1_account_login_all()
 

@@ -24,7 +24,8 @@ class LoginAPI(RestClient):
         return response
 
     def delete_v1_account_login(
-            self
+            self,
+            **kwargs
     ):
         """
         DELETE
@@ -34,12 +35,14 @@ class LoginAPI(RestClient):
         """
 
         response = self.delete(
-            path=f'/v1/account/login'
+            path=f'/v1/account/login',
+            **kwargs
         )
         return response
 
     def delete_v1_account_login_all(
-            self
+            self,
+            **kwargs
     ):
         """
         DELETE
@@ -49,6 +52,7 @@ class LoginAPI(RestClient):
         """
 
         response = self.delete(
-            path=f'/v1/account/login/all'
+            path=f'/v1/account/login/all',
+            **kwargs
         )
         return response
