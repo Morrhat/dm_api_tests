@@ -36,12 +36,9 @@ class AccountHelper:
         self.dm_account_api = dm_account_api
         self.mailhog = mailhog
 
-    # Авторизационный токен
+    # Авторизованный клиент
     def auth_client(self, login: str, password: str):
-        response = self.dm_account_api.login_api.post_v1_account_login(
-            json_data={
-                'login': login,
-                'password': password})
+        response = self.user_login(login=login, password=password)
         token: dict[str, str] = {'x-dm-auth-token': response.headers['x-dm-auth-token']}
         self.dm_account_api.account_api.set_headers(token)
         self.dm_account_api.login_api.set_headers(token)
@@ -54,7 +51,7 @@ class AccountHelper:
             login: str,
             password: str,
             email: str
-            ):
+           ):
         json_data = {
             'login': login,
             'email': email,
@@ -66,7 +63,8 @@ class AccountHelper:
         response = self.dm_account_api.account_api.post_v1_account(json_data=json_data)
         assert response.status_code == 201, f"Пользователь не был создан {response.json()}"
         # Активация
-        response = self.get_activation_token(login=login)
+        token = self.get_activation_token(login=login)
+        response = self.dm_account_api.account_api.put_v1_account_token(token=token)
         assert response.status_code == 200, f"Пользователь не был активирован {response.json()}"
         return response
 
@@ -105,7 +103,7 @@ class AccountHelper:
         assert response.status_code == 200, f"Email пользователя не поменялся {response.json()}"
         return response
 
-    # Получение токена из письма и активация
+    # Получение токена из письма
     @retrier
     def get_activation_token(
             self,
@@ -122,10 +120,7 @@ class AccountHelper:
             if user_login == login:
                 token = user_data['ConfirmationLinkUrl'].split('/')[-1]
         assert token is not None, f"Токен для пользоваетля {login} не был получен"
-        # Активация токена
-        response = self.dm_account_api.account_api.put_v1_account_token(token=token)
-        assert response.status_code == 200, f"Пользователь не был активирован {response.json()}"
-        return response
+        return token
 
 
     # Инициализация сброса пароля
