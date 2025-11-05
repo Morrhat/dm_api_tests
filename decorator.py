@@ -53,7 +53,7 @@ def get_activation_token(
     assert token is not None, f"Токен для пользоваетля {login} не был получен"
     return token
 
-
+get_token_by_login(login="login", token_type='activation')
 
 def register_new_user(
         self,
@@ -76,7 +76,24 @@ def register_new_user(
     return response
 
 
-
+    # Смена пароля
+    # Активация токена сброса пароля
+    def set_new_password(
+            self,
+            login: str,
+            password: str,
+            token: str = None
+            ):
+        json_data = {
+            "login": login,
+            "token": token,
+            "oldPassword": password,
+            "newPassword": "987654321"
+        }
+        #token = self.get_password_token(login=login)
+        response = self.dm_account_api.account_api.put_v1_account_password(json_data=json_data)
+        assert response.status_code == 200, f"Пароль не был изменён {response.json()}"
+        return response
 
 
 

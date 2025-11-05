@@ -61,7 +61,6 @@ class AccountAPI(RestClient):
         )
         return response
 
-
     def put_v1_account_email(
             self,
             json_data
@@ -83,7 +82,6 @@ class AccountAPI(RestClient):
         )
         return response
 
-
     def post_v1_account_password(
             self,
             json_data
@@ -104,7 +102,6 @@ class AccountAPI(RestClient):
             headers=headers
         )
         return response
-
 
     def put_v1_account_password(
             self,

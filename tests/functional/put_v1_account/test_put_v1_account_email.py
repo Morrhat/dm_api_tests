@@ -1,6 +1,7 @@
-
-
-def test_put_v1_account_email(account_helper, prepare_user):
+def test_put_v1_account_email(
+        account_helper,
+        prepare_user
+        ):
     login = prepare_user.login
     password = prepare_user.password
     email = prepare_user.email
@@ -19,9 +20,9 @@ def test_put_v1_account_email(account_helper, prepare_user):
     assert response.status_code == 403, f"Пользователь смог авторизоваться под старыми данными {response.json()}"
 
     # Получить токен из почтового сервера по новому email для подтверждения смены
-    token = account_helper.get_activation_token(login=login)
-    response = account_helper.dm_account_api.account_api.put_v1_account_token(token=token)
-    assert response.status_code == 200, f"Пользователь не был активирован {response.json()}"
+    token = account_helper.get_token_by_login(login=login, token_type='activation')
+    account_helper.activate_user(token=token)
+
 
     # Авторизоваться
     response = account_helper.user_login(login=login, password=password)
