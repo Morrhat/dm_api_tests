@@ -56,9 +56,10 @@ class AccountHelper:
 
     # Получить инфо о пользователе
     def get_account_info(
-            self
+            self,
+            validate_response=True
     ):
-        self.dm_account_api.account_api.get_v1_account()
+        self.dm_account_api.account_api.get_v1_account(validate_response=validate_response)
 
     # Регистрация и активация нового пользователя
     def register_new_user(
@@ -97,7 +98,7 @@ class AccountHelper:
             login: str,
             password: str,
             remember_me: bool = True,
-            validate_response=False
+            validate_response=True
     ):
         login_credentials = LoginCredentials(
             login=login,

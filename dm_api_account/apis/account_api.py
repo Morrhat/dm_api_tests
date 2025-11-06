@@ -4,6 +4,7 @@ from dm_api_account.models.change_email import ChangeEmail
 from dm_api_account.models.change_password import ChangePassword
 from dm_api_account.models.registration import Registration
 from dm_api_account.models.reset_password import ResetPassword
+from dm_api_account.models.user_details_envelope import UserDetailsEnvelope
 from dm_api_account.models.user_envelope import UserEnvelope
 from restclient.client import RestClient
 
@@ -30,12 +31,14 @@ class AccountAPI(RestClient):
 
     def get_v1_account(
             self,
+            validate_response=True,
             **kwargs
     ):
         """
         GET
         /v1/account
         Get current user
+        :param validate_response:
         :return:
         """
 
@@ -43,6 +46,8 @@ class AccountAPI(RestClient):
             path=f'/v1/account',
             **kwargs
         )
+        if validate_response:
+            return UserDetailsEnvelope(**response.json())
         return response
 
     def put_v1_account_token(
