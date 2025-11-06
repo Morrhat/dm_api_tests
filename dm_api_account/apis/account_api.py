@@ -1,6 +1,7 @@
 import requests
 
 from dm_api_account.models.registration import Registration
+from dm_api_account.models.user_envelope import UserEnvelope
 from restclient.client import RestClient
 
 
@@ -43,12 +44,14 @@ class AccountAPI(RestClient):
 
     def put_v1_account_token(
             self,
-            token
+            token,
+            validate_response=True
     ):
         """
         PUT
         /v1/account/{token}
         Activate registered user
+        :param validate_response:
         :param token:
         :return:
         """
@@ -60,6 +63,8 @@ class AccountAPI(RestClient):
             path=f'/v1/account/{token}',
             headers=headers
         )
+        if validate_response:
+            return UserEnvelope(**response.json())
         return response
 
     def put_v1_account_email(

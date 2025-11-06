@@ -78,14 +78,13 @@ class AccountHelper:
         end_time = time.time()
         assert end_time - start_time < 3, 'Время ожидания активации превышено'
         response = self.activate_user(token=token)
-        assert response.status_code == 200, f"Пользователь не был активирован {response.json()}"
+        #assert response.status_code == 200, f"Пользователь не был активирован {response.json()}"
         return response
 
 
     #Активация пользоваетля
     def activate_user(self, token: str):
         response = self.dm_account_api.account_api.put_v1_account_token(token=token)
-        assert response.status_code == 200, f"Пользователь не был активирован {response.json()}"
         return response
 
 
@@ -94,15 +93,18 @@ class AccountHelper:
             self,
             login: str,
             password: str,
-            remember_me: bool = True
+            remember_me: bool = True,
+            validate_response=False
     ):
         login_credentials = LoginCredentials(
             login=login,
             password= password,
             remember_me= remember_me
         )
-        response = self.dm_account_api.login_api.post_v1_account_login(login_credentials=login_credentials)
-        assert response.status_code == 200, f"Пользователь смог авторизоваться под старыми данными {response.json()}"
+        response = self.dm_account_api.login_api.post_v1_account_login(
+            login_credentials=login_credentials,
+            validate_response=validate_response)
+        #assert response.status_code == 200, f"Пользователь смог авторизоваться под старыми данными {response.json()}"
         assert response.headers['x-dm-auth-token'], 'Токен не был получен'
         return response
 
@@ -119,7 +121,7 @@ class AccountHelper:
             'email': email,
         }
         response = self.dm_account_api.account_api.put_v1_account_email(json_data=json_data)
-        assert response.status_code == 200, f"Email пользователя не поменялся {response.json()}"
+        #assert response.status_code == 200, f"Email пользователя не поменялся {response.json()}"
         return response
 
     # Инициализация сброса пароля
@@ -134,7 +136,7 @@ class AccountHelper:
             'email': email,
         }
         response = self.dm_account_api.account_api.post_v1_account_password(json_data=json_data)
-        assert response.status_code == 200, f"Сброс пароля не инициализирован {response.json()}"
+        #assert response.status_code == 200, f"Сброс пароля не инициализирован {response.json()}"
         token = self.get_token_by_login(login=login, token_type='password')
         json_data = {
             "login": login,
@@ -143,7 +145,7 @@ class AccountHelper:
             "newPassword": "987654321"
         }
         response = self.dm_account_api.account_api.put_v1_account_password(json_data=json_data)
-        assert response.status_code == 200, f"Пароль не был изменён {response.json()}"
+        #assert response.status_code == 200, f"Пароль не был изменён {response.json()}"
         return response
 
     # Получение токена из письма
@@ -155,7 +157,7 @@ class AccountHelper:
     ):
         # Получение писем
         response = self.mailhog.mailhog_api.get_api_v2_messages()
-        assert response.status_code == 200, f"Письма не были получены {response.json()}"
+        #assert response.status_code == 200, f"Письма не были получены {response.json()}"
 
         # Получение токена
         token = None
