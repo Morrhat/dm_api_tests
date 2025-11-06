@@ -81,5 +81,5 @@ class UserDetailsEnvelope(BaseModel):
     metadata: Optional[str] = None
     type: Optional[str] = Field(None, description='Type')
     title: Optional[str] = Field(None, description='Title')
-    status: Optional[str] = Field(None, description='Status code')
+    status: Optional[int] = Field(None, description='Status code')
     traceId: Optional[str] = Field(None, description='traceId')
