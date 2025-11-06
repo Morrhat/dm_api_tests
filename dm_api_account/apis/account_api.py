@@ -1,6 +1,9 @@
 import requests
 
+from dm_api_account.models.change_email import ChangeEmail
+from dm_api_account.models.change_password import ChangePassword
 from dm_api_account.models.registration import Registration
+from dm_api_account.models.reset_password import ResetPassword
 from dm_api_account.models.user_envelope import UserEnvelope
 from restclient.client import RestClient
 
@@ -15,7 +18,7 @@ class AccountAPI(RestClient):
         POST
         /v1/account
         Register new user
-        :param json_data:
+        :param registration:
         :return:
         """
 
@@ -69,12 +72,13 @@ class AccountAPI(RestClient):
 
     def put_v1_account_email(
             self,
-            json_data
+            change_email = ChangeEmail
     ):
         """
         PUT
         /v1/account/email
         Change registered user email
+        :param change_email:
         :return:
         """
 
@@ -83,19 +87,20 @@ class AccountAPI(RestClient):
         }
         response = self.put(
             path=f'/v1/account/email',
-            json=json_data,
+            json=change_email.model_dump(exclude_none=True, by_alias=True),
             headers=headers
         )
         return response
 
     def post_v1_account_password(
             self,
-            json_data
+            reset_password = ResetPassword
     ):
         """
         POST
         /v1/account/password
         Reset registered user password
+        :param reset_password:
         :return:
         """
 
@@ -104,20 +109,20 @@ class AccountAPI(RestClient):
         }
         response = self.post(
             path=f'/v1/account/password',
-            json=json_data,
-            headers=headers
+            headers=headers,
+            json=reset_password.model_dump(exclude_none=True, by_alias=True)
         )
         return response
 
     def put_v1_account_password(
             self,
-            json_data
+            change_password = ChangePassword
     ):
         """
         PUT
         /v1/account/password
         Change registered user password
-        :param json_data:
+        :param change_password:
         :return:
         """
 
@@ -126,7 +131,7 @@ class AccountAPI(RestClient):
         }
         response = self.put(
             path=f'/v1/account/password',
-            json=json_data,
+            json=change_password.model_dump(exclude_none=True, by_alias=True),
             headers=headers
         )
         return response
