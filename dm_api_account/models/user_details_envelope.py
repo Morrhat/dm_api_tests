@@ -79,7 +79,7 @@ class UserDetailsEnvelope(BaseModel):
     model_config = ConfigDict(extra='forbid')
     resource: Optional[UserDetails] = None
     metadata: Optional[str] = None
-    type: Optional[str] = Field(None, description='Type')
-    title: Optional[str] = Field(None, description='Title')
-    status: Optional[int] = Field(None, description='Status code')
-    traceId: Optional[str] = Field(None, description='traceId')
+    #type: #Optional[str] = Field(None, description='Type')
+    #title: Optional[str] = Field(None, description='Title')
+    #status: Optional[int] = Field(None, description='Status code')
+    #traceId: Optional[str] = Field(None, description='traceId')

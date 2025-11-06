@@ -4,6 +4,7 @@ from dm_api_account.models.change_email import ChangeEmail
 from dm_api_account.models.change_password import ChangePassword
 from dm_api_account.models.registration import Registration
 from dm_api_account.models.reset_password import ResetPassword
+from dm_api_account.models.unauthorized import Unauthorized
 from dm_api_account.models.user_details_envelope import UserDetailsEnvelope
 from dm_api_account.models.user_envelope import UserEnvelope
 from restclient.client import RestClient
@@ -46,8 +47,10 @@ class AccountAPI(RestClient):
             path=f'/v1/account',
             **kwargs
         )
-        if validate_response:
+        if validate_response and response.status_code == 200:
             return UserDetailsEnvelope(**response.json())
+        if validate_response and response.status_code == 401:
+            return Unauthorized(**response.json())
         return response
 
     def put_v1_account_token(
