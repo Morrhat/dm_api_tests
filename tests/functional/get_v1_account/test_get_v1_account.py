@@ -9,4 +9,4 @@ def test_get_v1_account_no_auth(
         account_helper,
         validate_response=False
         ):
-    account_helper.get_account_info(validate_response=validate_response)
+    account_helper.get_account_info(validate_response=False)
