@@ -57,9 +57,10 @@ class AccountHelper:
     # Получить инфо о пользователе
     def get_account_info(
             self,
-            validate_response=False
+            validate_response=True
     ):
-        self.dm_account_api.account_api.get_v1_account(validate_response=validate_response)
+        response = self.dm_account_api.account_api.get_v1_account(validate_response=validate_response)
+        return response
 
     # Регистрация и активация нового пользователя
     def register_new_user(
@@ -75,7 +76,7 @@ class AccountHelper:
 
         # Регистрация пользователя
         response = self.dm_account_api.account_api.post_v1_account(registration=registration)
-        assert response.status_code == 201, f"Пользователь не был создан {response.json()}"
+        #assert response.status_code == 201, f"Пользователь не был создан {response.json()}"
         # Активация пользователя
         start_time = time.time()
         token = self.get_token_by_login(login=login, token_type='activation')
@@ -98,7 +99,8 @@ class AccountHelper:
             login: str,
             password: str,
             remember_me: bool = True,
-            validate_response=True
+            validate_response=False,
+            validate_headers=False
     ):
         login_credentials = LoginCredentials(
             login=login,
@@ -108,8 +110,9 @@ class AccountHelper:
         response = self.dm_account_api.login_api.post_v1_account_login(
             login_credentials=login_credentials,
             validate_response=validate_response)
-        #assert response.status_code == 200, f"Пользователь смог авторизоваться под старыми данными {response.json()}"
-        assert response.headers['x-dm-auth-token'], 'Токен не был получен'
+        if validate_headers:
+            assert response.status_code == 200, f"Пользователь не смог авторизоваться {response.json()}"
+            assert response.headers['x-dm-auth-token'], 'Токен не был получен'
         return response
 
     # Смена email

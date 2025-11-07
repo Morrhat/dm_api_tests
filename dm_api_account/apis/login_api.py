@@ -26,7 +26,7 @@ class LoginAPI(RestClient):
             json=login_credentials.model_dump(exclude_none=True, by_alias=True)
         )
         if validate_response:
-            UserEnvelope(**response.json())
+            return UserEnvelope(**response.json())
         return response
 
     def delete_v1_account_login(
