@@ -1,5 +1,6 @@
 from datetime import datetime
 
+import pytest
 from hamcrest import (
     assert_that,
     has_property,
@@ -12,6 +13,7 @@ from hamcrest import (
 
 
 # Текущий пользователь через авторизованный клиент
+@pytest.mark.order(1)
 def test_get_v1_account(
         auth_account_helper
 ):
@@ -48,7 +50,6 @@ def test_get_v1_account(
                 )
         )
     )
-    print(response)
 
 
 # Текущий пользователь без авторизации

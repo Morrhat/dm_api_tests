@@ -48,9 +48,7 @@ class AccountHelper:
             password: str
     ):
         response = self.user_login(login=login, password=password)
-        token: dict[str, str] = {
-            'x-dm-auth-token': response.headers['x-dm-auth-token']
-        }
+        token: dict[str, str] = {'x-dm-auth-token': response.headers['x-dm-auth-token']}
         self.dm_account_api.account_api.set_headers(token)
         self.dm_account_api.login_api.set_headers(token)
 
