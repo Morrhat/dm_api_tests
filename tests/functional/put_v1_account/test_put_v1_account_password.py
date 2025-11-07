@@ -11,9 +11,12 @@ def test_put_v1_account_password(account_helper, prepare_user):
     # Авторизоваться
     account_helper.user_login(login=login, password=password)
 
+    #Выбор нового пароля
+    new_password = "987654321"
+
     # Смена пароля
-    account_helper.change_password(login=login, email=email, password=password)
+    account_helper.change_password(login=login, email=email, password=password, new_password=new_password)
 
     # Авторизоваться с новым паролем
-    account_helper.user_login(login=login, password="987654321")
+    account_helper.user_login(login=login, password=new_password)
 

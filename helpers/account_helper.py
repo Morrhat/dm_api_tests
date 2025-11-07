@@ -57,7 +57,7 @@ class AccountHelper:
     # Получить инфо о пользователе
     def get_account_info(
             self,
-            validate_response=True
+            validate_response=False
     ):
         self.dm_account_api.account_api.get_v1_account(validate_response=validate_response)
 
@@ -133,7 +133,8 @@ class AccountHelper:
             self,
             login: str,
             email: str,
-            password: str
+            password: str,
+            new_password: str
     ):
         reset_password = ResetPassword(
             login=login,
@@ -146,7 +147,7 @@ class AccountHelper:
             login=login,
             token=token,
             old_password=password,
-            new_password='987654321',
+            new_password=new_password,
         )
         response = self.dm_account_api.account_api.put_v1_account_password(change_password=change_password)
         #assert response.status_code == 200, f"Пароль не был изменён {response.json()}"

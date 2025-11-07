@@ -47,10 +47,8 @@ class AccountAPI(RestClient):
             path=f'/v1/account',
             **kwargs
         )
-        if validate_response and response.status_code == 200:
+        if validate_response:
             return UserDetailsEnvelope(**response.json())
-        if validate_response and response.status_code == 401:
-            return Unauthorized(**response.json())
         return response
 
     def put_v1_account_token(
@@ -80,12 +78,14 @@ class AccountAPI(RestClient):
 
     def put_v1_account_email(
             self,
-            change_email = ChangeEmail
+            change_email: ChangeEmail,
+            validate_response=True
     ):
         """
         PUT
         /v1/account/email
         Change registered user email
+        :param validate_response:
         :param change_email:
         :return:
         """
@@ -98,16 +98,20 @@ class AccountAPI(RestClient):
             json=change_email.model_dump(exclude_none=True, by_alias=True),
             headers=headers
         )
+        if validate_response:
+            return UserEnvelope(**response.json())
         return response
 
     def post_v1_account_password(
             self,
-            reset_password = ResetPassword
+            reset_password: ResetPassword,
+            validate_response=True
     ):
         """
         POST
         /v1/account/password
         Reset registered user password
+        :param validate_response:
         :param reset_password:
         :return:
         """
@@ -120,16 +124,20 @@ class AccountAPI(RestClient):
             headers=headers,
             json=reset_password.model_dump(exclude_none=True, by_alias=True)
         )
+        if validate_response:
+            return UserEnvelope(**response.json())
         return response
 
     def put_v1_account_password(
             self,
-            change_password = ChangePassword
+            change_password = ChangePassword,
+            validate_response=True
     ):
         """
         PUT
         /v1/account/password
         Change registered user password
+        :param validate_response:
         :param change_password:
         :return:
         """
@@ -142,4 +150,6 @@ class AccountAPI(RestClient):
             json=change_password.model_dump(exclude_none=True, by_alias=True),
             headers=headers
         )
+        if validate_response:
+            return UserEnvelope(**response.json())
         return response
