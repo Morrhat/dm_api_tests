@@ -109,7 +109,6 @@ class AccountHelper:
             login_credentials=login_credentials,
             validate_response=validate_response)
         if validate_headers:
-            assert response.status_code == 200, f"Пользователь не смог авторизоваться {response.json()}"
             assert response.headers['x-dm-auth-token'], 'Токен не был получен'
         return response
 

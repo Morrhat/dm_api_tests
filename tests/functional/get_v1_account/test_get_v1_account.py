@@ -10,6 +10,7 @@ from hamcrest import (
     has_properties,
     equal_to,
 )
+from checkers.http_checkers import check_status_code_http
 
 
 # Текущий пользователь через авторизованный клиент
@@ -17,7 +18,8 @@ from hamcrest import (
 def test_get_v1_account(
         auth_account_helper
 ):
-    response = auth_account_helper.get_account_info()
+    with check_status_code_http():
+        response = auth_account_helper.get_account_info()
     print(response)
     assert_that(
         response, all_of(
@@ -52,9 +54,10 @@ def test_get_v1_account(
     )
 
 
-# Текущий пользователь без авторизации
-#def test_get_v1_account_no_auth(
-#        account_helper,
-#        validate_response=False
-#):
-#    account_helper.get_account_info(validate_response=validate_response)
+ #Текущий пользователь без авторизации
+def test_get_v1_account_no_auth(
+        account_helper,
+        validate_response=False
+):
+    with check_status_code_http(401, 'User must be authenticated'):
+        account_helper.get_account_info(validate_response=validate_response)
