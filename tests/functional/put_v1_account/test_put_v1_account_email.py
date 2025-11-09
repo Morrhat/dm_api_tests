@@ -1,3 +1,6 @@
+from checkers.http_checkers import check_status_code_http
+
+
 def test_put_v1_account_email(
         account_helper,
         prepare_user
@@ -16,8 +19,8 @@ def test_put_v1_account_email(
     account_helper.change_email(login=login, password=password, email=email)
 
     # Авторизация под старыми данными неудачная
-    #response = account_helper.user_login(login=login, password=password)
-    #assert response.status_code == 403, f"Пользователь смог авторизоваться под старыми данными {response.json()}"
+    with check_status_code_http(403, 'User is inactive. Address the technical support for more details'):
+        account_helper.user_login(login=login, password=password)
 
     # Получить токен из почтового сервера по новому email для подтверждения смены
     token = account_helper.get_token_by_login(login=login, token_type='activation')
@@ -25,5 +28,5 @@ def test_put_v1_account_email(
 
 
     # Авторизоваться
-    response = account_helper.user_login(login=login, password=password)
-    #assert response.status_code == 200, f"Пользователь не смог авторизоваться {response.json()}"
+    with check_status_code_http():
+        account_helper.user_login(login=login, password=password)

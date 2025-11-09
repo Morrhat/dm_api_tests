@@ -73,15 +73,13 @@ class AccountHelper:
             password= password)
 
         # Регистрация пользователя
-        response = self.dm_account_api.account_api.post_v1_account(registration=registration)
-        #assert response.status_code == 201, f"Пользователь не был создан {response.json()}"
+        self.dm_account_api.account_api.post_v1_account(registration=registration)
         # Активация пользователя
         start_time = time.time()
         token = self.get_token_by_login(login=login, token_type='activation')
         end_time = time.time()
         assert end_time - start_time < 3, 'Время ожидания активации превышено'
         response = self.activate_user(token=token)
-        #assert response.status_code == 200, f"Пользователь не был активирован {response.json()}"
         return response
 
 
@@ -125,7 +123,6 @@ class AccountHelper:
             email= email
         )
         response = self.dm_account_api.account_api.put_v1_account_email(change_email=change_email)
-        #assert response.status_code == 200, f"Email пользователя не поменялся {response.json()}"
         return response
 
     # Инициализация сброса пароля
@@ -141,7 +138,6 @@ class AccountHelper:
             email=email
         )
         response = self.dm_account_api.account_api.post_v1_account_password(reset_password=reset_password)
-        #assert response.status_code == 200, f"Сброс пароля не инициализирован {response.json()}"
         token = self.get_token_by_login(login=login, token_type='password')
         change_password = ChangePassword(
             login=login,
@@ -150,7 +146,6 @@ class AccountHelper:
             new_password=new_password,
         )
         response = self.dm_account_api.account_api.put_v1_account_password(change_password=change_password)
-        #assert response.status_code == 200, f"Пароль не был изменён {response.json()}"
         return response
 
     # Получение токена из письма
@@ -162,19 +157,20 @@ class AccountHelper:
     ):
         # Получение писем
         response = self.mailhog.mailhog_api.get_api_v2_messages()
-        #assert response.status_code == 200, f"Письма не были получены {response.json()}"
 
         # Получение токена
         token = None
         for item in response.json()['items']:
             user_data = loads(item['Content']['Body'])
             user_login = user_data['Login']
-            if (user_login == login) and (token_type == 'password'):
-                token = user_data['ConfirmationLinkUri'].split('/')[-1]
-                break
-            if (user_login == login) and (token_type == 'activation'):
-                token = user_data['ConfirmationLinkUrl'].split('/')[-1]
-                break
+            if token_type == 'password':
+                if user_login == login:
+                    token = user_data['ConfirmationLinkUri'].split('/')[-1]
+                    break
+            if token_type == 'activation':
+                if user_login == login:
+                    token = user_data['ConfirmationLinkUrl'].split('/')[-1]
+                    break
         assert token is not None, f"Токен сброса пароля {login} не был получен"
         return token
 
