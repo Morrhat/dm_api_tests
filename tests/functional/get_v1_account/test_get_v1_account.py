@@ -9,7 +9,10 @@ from checkers.http_checkers import check_status_code_http
 def test_get_v1_account(
         auth_account_helper
 ):
-    GetV1Account.check_response_values(auth_account_helper)
+    with check_status_code_http():
+        response = auth_account_helper.get_account_info()
+    GetV1Account.check_response_values(response)
+    print(response)
 
 
 #Текущий пользователь без авторизации

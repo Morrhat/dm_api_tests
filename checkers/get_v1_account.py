@@ -10,18 +10,14 @@ from hamcrest import (
     equal_to,
 )
 
-from checkers.http_checkers import check_status_code_http
-
 
 class GetV1Account:
     @classmethod
     def check_response_values(
             cls,
-            auth_account_helper
+            response
     ):
-        with check_status_code_http():
-            response = auth_account_helper.get_account_info()
-        print(response)
+
         assert_that(
             response, all_of(
                 has_property('resource', has_property('login', starts_with('kristinochka'))),

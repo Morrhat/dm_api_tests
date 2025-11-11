@@ -28,7 +28,6 @@ def retrier(
             if token:
                 return token
             time.sleep(1)
-
     return wrapper
 
 
@@ -171,7 +170,7 @@ class AccountHelper:
                 if user_login == login:
                     token = user_data['ConfirmationLinkUrl'].split('/')[-1]
                     break
-        #assert token is not None, f"Токен сброса пароля {login} не был получен"
+        assert token is not None, f"Токен сброса пароля {login} не был получен"
         return token
 
     # Логаут пользователя
