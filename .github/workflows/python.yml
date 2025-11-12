@@ -2,6 +2,11 @@ name: Python Tests
 
 on: [ push, pull_request ]
 
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
 jobs:
   test:
     name: Python tests
@@ -29,7 +34,7 @@ jobs:
         with:
           name: allure-results
           path: allure-results
-          retention-days: 1
+          #retention-days: 1
 
   generate-report:
     runs-on: ubuntu-latest
@@ -49,7 +54,7 @@ jobs:
         with:
           name: _site
           path: _site
-          retention-days: 1
+          #retention-days: 1
 
   publish_report:
     runs-on: ubuntu-latest
