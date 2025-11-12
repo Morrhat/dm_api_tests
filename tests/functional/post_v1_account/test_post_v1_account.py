@@ -1,17 +1,23 @@
+import allure
 import pytest
 from checkers.http_checkers import check_status_code_http
 
 
-def test_post_v1_account(
-        account_helper,
-        prepare_user
-        ):
-    login = prepare_user.login
-    password = prepare_user.password
-    email = prepare_user.email
+@allure.suite('Тесты на проверку метода POST v1/account')
+@allure.sub_suite('Позитивные тесты')
+class TestsPostV1Account:
+    @allure.title('Проверка регистрации нового пользователя')
+    def test_post_v1_account(
+            self,
+            account_helper,
+            prepare_user
+            ):
+        login = prepare_user.login
+        password = prepare_user.password
+        email = prepare_user.email
 
-    # Регистрация пользователя
-    account_helper.register_new_user(login=login, password=password, email=email)
+        # Регистрация пользователя
+        account_helper.register_new_user(login=login, password=password, email=email)
 
 
 
@@ -37,11 +43,16 @@ data = [
 ]
 
 
-@pytest.mark.parametrize('data', data)
-def test_post_v1_account_negative(
-        account_helper,
-        data
-        ):
-    # Регистрация пользователя
-    with check_status_code_http(400, 'Validation failed'):
-        account_helper.register_new_user(login=data['login'], password=data['password'], email=data['email'])
+@allure.suite('Тесты на проверку метода POST v1/account')
+@allure.sub_suite('Негативные тесты')
+class TestsPostV1AccountNegative:
+    @allure.title('Проверка регистрации нового пользователя')
+    @pytest.mark.parametrize('data', data)
+    def test_post_v1_account_negative(
+            self,
+            account_helper,
+            data
+            ):
+        # Регистрация пользователя
+        with check_status_code_http(400, 'Validation failed'):
+            account_helper.register_new_user(login=data['login'], password=data['password'], email=data['email'])

@@ -1,5 +1,6 @@
 from datetime import datetime
 
+import allure
 from hamcrest import (
     assert_that,
     has_property,
@@ -17,37 +18,37 @@ class GetV1Account:
             cls,
             response
     ):
-
-        assert_that(
-            response, all_of(
-                has_property('resource', has_property('login', starts_with('kristinochka'))),
-                has_property('resource', has_property('registration', instance_of(datetime))),
-                has_property(
-                    'resource', has_properties(
-                        {
-                            'roles': ["Guest", "Player"]
-                        }
-                    )
-                ),
-                has_property('resource', has_property('info', equal_to(""))),
-                has_property('resource', has_property("settings", has_property('color_schema', equal_to(None)))),
-                has_property(
-                    'resource', has_property("settings", has_property('nanny_greetings_message', equal_to(None)))
+        with allure.step('Проверка ответа'):
+            assert_that(
+                response, all_of(
+                    has_property('resource', has_property('login', starts_with('kristinochka'))),
+                    has_property('resource', has_property('registration', instance_of(datetime))),
+                    has_property(
+                        'resource', has_properties(
+                            {
+                                'roles': ["Guest", "Player"]
+                            }
+                        )
                     ),
-                has_property(
-                    'resource', has_property(
-                        "settings", has_property(
-                            'paging', has_properties(
-                                {
-                                    "posts_per_page": equal_to(10),
-                                    "comments_per_page": equal_to(10),
-                                    "topics_per_page": equal_to(10),
-                                    "messages_per_page": equal_to(10),
-                                    "entities_per_page": equal_to(10)
-                                }
+                    has_property('resource', has_property('info', equal_to(""))),
+                    has_property('resource', has_property("settings", has_property('color_schema', equal_to(None)))),
+                    has_property(
+                        'resource', has_property("settings", has_property('nanny_greetings_message', equal_to(None)))
+                        ),
+                    has_property(
+                        'resource', has_property(
+                            "settings", has_property(
+                                'paging', has_properties(
+                                    {
+                                        "posts_per_page": equal_to(10),
+                                        "comments_per_page": equal_to(10),
+                                        "topics_per_page": equal_to(10),
+                                        "messages_per_page": equal_to(10),
+                                        "entities_per_page": equal_to(10)
+                                    }
+                                )
                             )
                         )
                     )
                 )
             )
-        )

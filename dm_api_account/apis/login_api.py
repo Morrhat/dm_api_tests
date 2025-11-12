@@ -1,3 +1,4 @@
+import allure
 import requests
 
 from dm_api_account.models.login_credentials import LoginCredentials
@@ -7,6 +8,7 @@ from restclient.client import RestClient
 
 class LoginAPI(RestClient):
 
+    @allure.step('Авторизовать пользователя')
     def post_v1_account_login(
             self,
             login_credentials: LoginCredentials,
@@ -29,6 +31,7 @@ class LoginAPI(RestClient):
             return UserEnvelope(**response.json())
         return response
 
+    @allure.step('Выйти из аккаунта пользователя')
     def delete_v1_account_login(
             self,
             **kwargs
@@ -46,6 +49,7 @@ class LoginAPI(RestClient):
         )
         return response
 
+    @allure.step('Выйти из всех аккаунтов пользователя')
     def delete_v1_account_login_all(
             self,
             **kwargs

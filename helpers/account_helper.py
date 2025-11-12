@@ -1,6 +1,8 @@
 import time
 from json import loads
 
+import allure
+
 from dm_api_account.models.change_email import ChangeEmail
 from dm_api_account.models.change_password import ChangePassword
 from dm_api_account.models.login_credentials import LoginCredentials
@@ -41,6 +43,7 @@ class AccountHelper:
         self.mailhog = mailhog
 
     # Авторизованный клиент
+    @allure.step('Авторизованный клиент')
     def auth_client(
             self,
             login: str,
@@ -52,6 +55,7 @@ class AccountHelper:
         self.dm_account_api.login_api.set_headers(token)
 
     # Получить инфо о пользователе
+    @allure.step('Получить инфо о пользователе')
     def get_account_info(
             self,
             validate_response=True
@@ -60,6 +64,7 @@ class AccountHelper:
         return response
 
     # Регистрация и активация нового пользователя
+    @allure.step('Регистрация и активация нового пользователя')
     def register_new_user(
             self,
             login: str,
@@ -83,12 +88,14 @@ class AccountHelper:
 
 
     #Активация пользователя
+    @allure.step('Активация пользователя')
     def activate_user(self, token: str):
         response = self.dm_account_api.account_api.put_v1_account_token(token=token)
         return response
 
 
     # Авторизация
+    @allure.step('Авторизация пользователя')
     def user_login(
             self,
             login: str,
@@ -110,6 +117,7 @@ class AccountHelper:
         return response
 
     # Смена email
+    @allure.step('Смена email пользователя')
     def change_email(
             self,
             login: str,
@@ -125,6 +133,7 @@ class AccountHelper:
         return response
 
     # Инициализация сброса пароля
+    @allure.step('Инициализация сброса пароля пользователя')
     def change_password(
             self,
             login: str,
@@ -149,6 +158,7 @@ class AccountHelper:
 
     # Получение токена из письма
     @retrier
+    @allure.step('Получение токена из письма')
     def get_token_by_login(
             self,
             login: str,
@@ -174,12 +184,14 @@ class AccountHelper:
         return token
 
     # Логаут пользователя
+    @allure.step('Логаут пользователя')
     def logout_user(
             self
     ):
         self.dm_account_api.login_api.delete_v1_account_login()
 
     # Логаут со всех устройств
+    @allure.step('Логаут со всех устройств пользователя')
     def logout_user_all(
             self
     ):

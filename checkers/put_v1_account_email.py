@@ -1,3 +1,4 @@
+import allure
 from hamcrest import (
     assert_that,
     all_of,
@@ -14,15 +15,16 @@ class PutV1AccountEmail:
             cls,
             response
     ):
-        assert_that(
-            response, all_of(
-                has_property('resource', has_property('login', starts_with('kristinochka'))),
-                has_property(
-                    'resource', has_properties(
-                        {
-                            'roles': ["Guest", "Player"]
-                        }
+        with allure.step('Проверка ответа'):
+            assert_that(
+                response, all_of(
+                    has_property('resource', has_property('login', starts_with('kristinochka'))),
+                    has_property(
+                        'resource', has_properties(
+                            {
+                                'roles': ["Guest", "Player"]
+                            }
+                        )
                     )
                 )
             )
-        )
