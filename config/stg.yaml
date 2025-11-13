@@ -1,0 +1,7 @@
+service:
+  dm_api_account: 'http://5.63.153.31:5051'
+  mailhog: 'http://5.63.153.31:5025'
+
+user:
+  login: 'kristinochka_07_11_2025_23_38_42'
+  password: "123456789"

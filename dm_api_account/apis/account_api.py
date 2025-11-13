@@ -1,36 +1,48 @@
+import allure
 import requests
 
+from dm_api_account.models.change_email import ChangeEmail
+from dm_api_account.models.change_password import ChangePassword
+from dm_api_account.models.registration import Registration
+from dm_api_account.models.reset_password import ResetPassword
+from dm_api_account.models.unauthorized import Unauthorized
+from dm_api_account.models.user_details_envelope import UserDetailsEnvelope
+from dm_api_account.models.user_envelope import UserEnvelope
 from restclient.client import RestClient
 
 
 class AccountAPI(RestClient):
 
+    @allure.step('Зарегистрировать нового пользователя')
     def post_v1_account(
             self,
-            json_data
+            registration: Registration,
     ):
         """
         POST
         /v1/account
         Register new user
-        :param json_data:
+        :param registration:
         :return:
         """
 
         response = self.post(
             path=f'/v1/account',
-            json=json_data
+            json=registration.model_dump(exclude_none=True, by_alias=True)
         )
         return response
 
+    @allure.step('Получить инфо о пользователе')
     def get_v1_account(
             self,
+            validate_response=True,
             **kwargs
     ):
         """
         GET
         /v1/account
         Get current user
+        :param validate_response:
         :return:
         """
 
@@ -38,16 +50,21 @@ class AccountAPI(RestClient):
             path=f'/v1/account',
             **kwargs
         )
+        if validate_response:
+            return UserDetailsEnvelope(**response.json())
         return response
 
+    @allure.step('Активировать токен пользователя')
     def put_v1_account_token(
             self,
-            token
+            token,
+            validate_response=True
     ):
         """
         PUT
         /v1/account/{token}
         Activate registered user
+        :param validate_response:
         :param token:
         :return:
         """
@@ -59,16 +76,22 @@ class AccountAPI(RestClient):
             path=f'/v1/account/{token}',
             headers=headers
         )
+        if validate_response:
+            return UserEnvelope(**response.json())
         return response
 
+    @allure.step('Изменить email пользователя')
     def put_v1_account_email(
             self,
-            json_data
+            change_email: ChangeEmail,
+            validate_response=True
     ):
         """
         PUT
         /v1/account/email
         Change registered user email
+        :param validate_response:
+        :param change_email:
         :return:
         """
 
@@ -77,19 +100,25 @@ class AccountAPI(RestClient):
         }
         response = self.put(
             path=f'/v1/account/email',
-            json=json_data,
+            json=change_email.model_dump(exclude_none=True, by_alias=True),
             headers=headers
         )
+        if validate_response:
+            return UserEnvelope(**response.json())
         return response
 
+    @allure.step('Инициировать сброс пароля пользователя')
     def post_v1_account_password(
             self,
-            json_data
+            reset_password: ResetPassword,
+            validate_response=True
     ):
         """
         POST
         /v1/account/password
         Reset registered user password
+        :param validate_response:
+        :param reset_password:
         :return:
         """
 
@@ -98,20 +127,25 @@ class AccountAPI(RestClient):
         }
         response = self.post(
             path=f'/v1/account/password',
-            json=json_data,
-            headers=headers
+            headers=headers,
+            json=reset_password.model_dump(exclude_none=True, by_alias=True)
         )
+        if validate_response:
+            return UserEnvelope(**response.json())
         return response
 
+    @allure.step('Изменить пароль пользователя')
     def put_v1_account_password(
             self,
-            json_data
+            change_password: ChangePassword,
+            validate_response=True
     ):
         """
         PUT
         /v1/account/password
         Change registered user password
-        :param json_data:
+        :param validate_response:
+        :param change_password:
         :return:
         """
 
@@ -120,7 +154,9 @@ class AccountAPI(RestClient):
         }
         response = self.put(
             path=f'/v1/account/password',
-            json=json_data,
+            json=change_password.model_dump(exclude_none=True, by_alias=True),
             headers=headers
         )
+        if validate_response:
+            return UserEnvelope(**response.json())
         return response
