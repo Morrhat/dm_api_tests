@@ -11,7 +11,7 @@ from services.api_mailhog import MailHogApi
 import structlog
 from pathlib import Path
 from vyper import v
-from packages.notifier.bot import TelegramBot
+from packages.notifier.bot import send_file
 
 
 structlog.configure(
@@ -42,7 +42,7 @@ def setup_swagger_coverage():
     yield
     reporter.generate_report()
     reporter.cleanup_input_files()
-    #TelegramBot.send_file
+    #send_file()
 
 
 
