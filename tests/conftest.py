@@ -1,15 +1,18 @@
+import os
 from datetime import datetime
 from collections import namedtuple
 import pytest
 from swagger_coverage_py.reporter import CoverageReporter
 from helpers.account_helper import AccountHelper
-from restclient.configuration import Configuration as MailhogConfiguration
-from restclient.configuration import Configuration as DmApiConfiguration
+from packages.restclient.configuration import Configuration as MailhogConfiguration
+from packages.restclient.configuration import Configuration as DmApiConfiguration
 from services.dm_api_account import DMApiAccount
 from services.api_mailhog import MailHogApi
 import structlog
 from pathlib import Path
 from vyper import v
+from packages.notifier.bot import TelegramBot
+
 
 structlog.configure(
     processors=[
@@ -27,17 +30,19 @@ options = (
     'service.api_mailhog',
     'user.login',
     'user.password',
+    'telegram.chat_id',
+    'telegram.token',
 )
 
 
 @pytest.fixture(scope="session", autouse=True)
 def setup_swagger_coverage():
     reporter = CoverageReporter(api_name="dm-api-account", host="http://5.63.153.31:5051")
-    reporter.cleanup_input_files()
     reporter.setup("/swagger/Account/swagger.json")
-
     yield
     reporter.generate_report()
+    reporter.cleanup_input_files()
+    #TelegramBot.send_file
 
 
 
@@ -50,6 +55,11 @@ def set_config(request):
     v.read_in_config()
     for option in options:
         v.set(f'{option}', request.config.getoption(f'--{option}'))
+    os.environ['TELEGRAM_BOT_CHAT_ID'] = v.get('telegram.chat_id')
+    os.environ['TELEGRAM_BOT_ACCESS_TOKEN'] = v.get('telegram.token')
+    request.config.stash['telegram-notifier-addfields']['environment'] = config_name
+    request.config.stash['telegram-notifier-addfields']['report'] = 'https://morrhat.github.io/dm_api_tests/'
+
 
 
 def pytest_addoption(parser):
