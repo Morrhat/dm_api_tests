@@ -5,3 +5,7 @@ service:
 user:
   login: 'kristinochka_07_11_2025_23_38_42'
   password: "123456789"
+
+telegram:
+  chat_id: '-1003486055147'
+  token: 7718051598:AAGrdza5DzKYsZ_RO_qnRzkmszr9CyZPYMs
