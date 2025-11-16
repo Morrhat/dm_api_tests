@@ -2,6 +2,7 @@ from datetime import datetime
 from collections import namedtuple
 from json import loads
 import pytest
+from swagger_coverage_py.reporter import CoverageReporter
 
 from helpers.account_helper import AccountHelper
 from restclient.configuration import Configuration as MailhogConfiguration
@@ -29,6 +30,18 @@ options = (
     'user.login',
     'user.password',
 )
+
+
+@pytest.fixture(scope="session", autouse=True)
+def setup_swagger_coverage():
+    reporter = CoverageReporter(api_name="dm-api-account", host="http://5.63.153.31:5051")
+    reporter.setup("/swagger/Account/swagger.json")
+    yield
+    reporter.generate_report()
+    reporter.cleanup_input_files()
+    #send_file()
+
+
 
 @pytest.fixture(scope='session', autouse=True)
 def set_config(request):
